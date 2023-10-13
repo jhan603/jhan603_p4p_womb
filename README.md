@@ -1,4 +1,21 @@
-# p4_seg
+# ENGSCI 700A/B Project 41: Make Womb
+
+## Installation
+
+1. Have Anaconda navigator
+2. Go to the directory to create this virtual environment in
+3. Create a virtual environment by installing python 3.10
+   ```python
+   conda create -n p4penv python=3.10
+   # Then activate the environment
+   conda activate p4penv
+   ```
+4. Install the required dependencies using the requirements.txt file
+   ```python
+   pip install -r requirements.txt
+   ```
+Provide clear instructions on how to install your project. Include any dependencies, commands, or scripts needed for setup.
+
 
 ## Possible setup issue
 
