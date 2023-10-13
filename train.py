@@ -154,7 +154,8 @@ def train(model_name):
         # Show the plots
         plt.tight_layout()
         Images_set_dir = os.path.join(working_dir, "Images_Sets")
-        plt.savefig(f"{Images_set_dir}//{model_name}_Results.png")
+        os.makedirs(Images_set_dir, exist_ok=True)
+        plt.savefig(f"{Images_set_dir}\\{model_name}_Results.png")
         plt.close()
     
 
@@ -250,7 +251,7 @@ def Predict_and_Display_Images(data_dict, model):
 
         # If True save the images, else just show it and don't save it. 
         if save_image:
-            plt.savefig(f"{Images_set_dir}//Image_Set_{i+1}.png")
+            plt.savefig(f"{Images_set_dir}\\Image_Set_{i+1}.png")
             plt.close()
         else:
             plt.show()
@@ -259,8 +260,8 @@ def Predict_and_Display_Images(data_dict, model):
 
 if __name__ == "__main__":
     print("Initialize Training...")
-    models = ["ResNet152V2", "DenseNet121", "VGG19", "VGG16", "NASNetMobile", "DenseNet201", "MobileNetV2"]
-    #models = ["DenseNet201"]
+    #models = ["ResNet152V2", "DenseNet121", "VGG19", "VGG16", "NASNetMobile", "DenseNet201", "MobileNetV2"]
+    models = ["DenseNet201"]
     model_results = []
     for model_name in models:
         print(f"Training data on {model_name} Model")
