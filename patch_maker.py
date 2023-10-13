@@ -1,9 +1,12 @@
 import os
 import numpy as np
+import random
 from skimage.io import imread, imsave
 from skimage.util import view_as_blocks
 from sklearn.model_selection import train_test_split
 from utils import list_images_with_masks, load_images, save_images, display_image_and_mask
+
+import matplotlib.pyplot as plt
 
 working_dir = os.getcwd()
                        # Root directory when working at university
@@ -13,7 +16,11 @@ mask_dir = os.path.join(working_dir, "original_data", "masks")
 figure_dir = os.path.join(working_dir, "figures")
 os.makedirs(figure_dir, exist_ok=True)
 
-has_labels = ["0000", "0001", "0002", "0003", "0004"]
+has_labels = ["0000", "0001", "0002", "0003", "0004", 
+              "0005", "0006", "0007", "0008", "0009",
+              "0010", "0011", "0012", "0013", "0014",
+              "0015", "0016", "0017", "0018", "0019", 
+              "0020", "0021", "0022", "0023", "0024", "0029"]
 file_prefix = "H"
 # "Only slices 1-5, 10, 15, 20, 25, 30 have manual labels at this stage" was said in the email but slide 0014 doesnt have the appropriate mask.
 
@@ -96,7 +103,9 @@ def remove_all_black_imgs(image_paths, mask_paths):
         if not is_all_black(image):
             non_black_image_paths.append(image_path)
             non_black_mask_paths.append(mask_path)
-        else:  #remove all black image from disk
+        #else:  #remove all black image from disk
+        elif random.random() <= 0.8:
+            # Remove most of the all_black images
             os.remove(image_path)
             os.remove(mask_path)
 
@@ -124,6 +133,39 @@ def split_and_save_data(image_paths, mask_paths, main_folder, valid_size, test_s
     valid_images, test_images, valid_masks, test_masks, valid_img_paths, test_img_paths, valid_mask_paths, test_mask_paths = train_test_split(
         temp_images, temp_masks, temp_img_paths, temp_mask_paths, test_size=test_size / (valid_size + test_size), random_state=42, shuffle=True)
 
+    # Omit mask and corresponding images and the corresponding paths from train and test set
+    # should do it from the original images
+    # Made it more flexible just incase in the future there are more images and masks
+    train_index = []
+    print(f"Train_Masks Before: {len(train_masks)}")
+    for index, train_mask in enumerate(train_masks):
+        if 0 in train_mask:
+            print("0 detected")
+            print(index)
+            train_index.append(index)
+            print(np.unique(train_mask))
+            print(f"Path of file: {train_mask_paths[index]}")
+    train_masks = [train_masks[i] for i in range(len(train_masks)) if i not in train_index]
+    train_mask_paths = [train_mask_paths[i] for i in range(len(train_mask_paths)) if i not in train_index]
+    train_images = [train_images[i] for i in range(len(train_images)) if i not in train_index]
+    train_img_paths = [train_img_paths[i] for i in range(len(train_img_paths)) if i not in train_index]
+    train_mask_paths
+    train_img_paths
+    print(f"Train_Masks: {len(train_masks)}")
+    test_index = []
+    for index, test_mask in enumerate(test_masks):
+        if 0 in test_mask:
+            print("0 detected")
+            print(index)
+            test_index.append(index)
+            print(np.unique(test_mask))
+    test_masks = [test_masks[i] for i in range(len(test_masks)) if i not in test_index]
+    test_mask_paths = [test_mask_paths[i] for i in range(len(test_mask_paths)) if i not in test_index]
+    test_images = [test_images[i] for i in range(len(test_images)) if i not in test_index]
+    test_img_paths = [test_img_paths[i] for i in range(len(test_img_paths)) if i not in test_index]
+    test_mask_paths
+    test_img_paths
+
     os.makedirs(main_folder, exist_ok=True)
     save_images(train_images, train_img_paths, os.path.join(main_folder, "train", "images"))
     save_images(valid_images, valid_img_paths, os.path.join(main_folder, "valid", "images"))
@@ -140,6 +182,7 @@ def split_and_save_data(image_paths, mask_paths, main_folder, valid_size, test_s
     print(f"Min and Max values in valid set: {np.max(valid_images)} {np.min(valid_images)}")
     print(f"Min and Max values in test set: {np.max(test_images)} {np.min(test_images)}")
 
+    print("hee hee")
 
 if __name__ == "__main__":
     image_paths, mask_paths = list_images_with_masks(image_dir, mask_dir, file_prefix=file_prefix, files_to_pick=has_labels)
@@ -162,6 +205,11 @@ if __name__ == "__main__":
     # TODO: Modify this to delete patches that have more than some percentage of black (Ex: more than 90% black)
     non_black_image_paths, non_black_mask_paths = remove_all_black_imgs(split_img_path, split_mask_path)
 
+    # 70 15 15 split
     split_and_save_data(non_black_image_paths, non_black_mask_paths, os.path.join(working_dir, "final_data"), valid_size=0.15, test_size=0.15)
+    # 80 10 10 split
+    # split_and_save_data(non_black_image_paths, non_black_mask_paths, os.path.join(working_dir, "final_data"), valid_size=0.1, test_size=0.1)
+    # 60 20 20 split
+    # split_and_save_data(non_black_image_paths, non_black_mask_paths, os.path.join(working_dir, "final_data"), valid_size=0.2, test_size=0.2)
 
     print("Done with data preprocessing")

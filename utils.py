@@ -179,7 +179,9 @@ def transform_dataset(images, masks, input_shape=(256, 256)):
     transform = A.Compose([
         A.Resize(*input_shape),
         A.Normalize(mean=0.0, std=1.0), # Rescale between 0 and 1
-        A.HorizontalFlip(p=0.5) # Using a random flip
+        A.HorizontalFlip(p=0.5), # Using a random flip
+        A.VerticalFlip(p=0.5),
+        A.RandomRotate90(p = 0.5)
     ])
 
     transformed_images = []
@@ -203,11 +205,27 @@ def transform_dataset(images, masks, input_shape=(256, 256)):
     transformed_masks[transformed_masks == 255] = 5
     print(f"Unique values in transformed masks: {np.unique(transformed_masks)}")
 
+    # TODO: Shift 1-5 to 0-4 and see how that goes. 
+    # Then when plotting map it back to the other 1-255 values
+    print(f"Mapped 1-5 Values down to 0-4. Unique values are: {np.unique(transformed_masks)}")
+    transformed_masks[transformed_masks == 1] = 0
+    transformed_masks[transformed_masks == 2] = 1
+    transformed_masks[transformed_masks == 3] = 2
+    transformed_masks[transformed_masks == 4] = 3
+    transformed_masks[transformed_masks == 5] = 4
+    # When transforming to predict and view images
+    # 0 -> 1
+    # 1 -> 2
+    # 2 -> 3
+    # 3 -> 254
+    # 4 -> 255
+
     # if using categorical cross entropy, then need to convert labels to one-hot-encoding
     # with sparce categorical cross entropy, it is not needed
     # transformed_masks = to_categorical(transformed_masks, num_classes=num_classes)
 
-    # reshape only if using sparce categorical cross entropy
+    # reshape only if using sparce categorical cross entropy FAKE NEWS
     # transformed_masks = transformed_masks.reshape(-1)
     print(f"Transformed masks reshaped: Shape {transformed_masks.shape}")
     return transformed_images, transformed_masks
+
