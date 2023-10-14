@@ -14,8 +14,11 @@
    ```python
    pip install -r requirements.txt
    ```
-Provide clear instructions on how to install your project. Include any dependencies, commands, or scripts needed for setup.
 
+## Order of files to be run
+1. patch_maker.py
+2. train.py
+3. Arteries_Edge_Detection.py
 
 ## Possible setup issue
 
