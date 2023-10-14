@@ -260,8 +260,8 @@ def Predict_and_Display_Images(data_dict, model):
 
 if __name__ == "__main__":
     print("Initialize Training...")
-    #models = ["ResNet152V2", "DenseNet121", "VGG19", "VGG16", "NASNetMobile", "DenseNet201", "MobileNetV2"]
-    models = ["DenseNet201"]
+    models = ["ResNet152V2", "DenseNet121", "VGG19", "VGG16", "NASNetMobile", "DenseNet201", "MobileNetV2"]
+    #models = ["DenseNet201"]
     model_results = []
     for model_name in models:
         print(f"Training data on {model_name} Model")
